@@ -1,0 +1,21 @@
+# API keys
+.env
+*.pkl
+*.bin
+*.pt
+checkpoint.json
+
+# Data lourde
+data/*.json
+data/*.parquet
+data/*.csv
+models/*
+logs/
+results/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+env/

@@ -1,0 +1,210 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fr" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>backend.reranker &mdash; Documentation Système RAG 0.1</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=af8511e3"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/translations.js?v=e6b791cb"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Recherche" href="../search.html" />
+    <link rel="next" title="Frontend" href="../frontend.html" />
+    <link rel="prev" title="backend.llm" href="llm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Système RAG
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contenu:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../backend.html">Backend</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="main.html">backend.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rag.html">backend.rag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="embedder.html">backend.embedder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="llm.html">backend.llm</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">backend.reranker</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-reranker">Module Reranker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#backend.reranker.Reranker"><code class="docutils literal notranslate"><span class="pre">Reranker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#backend.reranker.Reranker.model_name"><code class="docutils literal notranslate"><span class="pre">Reranker.model_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#backend.reranker.Reranker.device"><code class="docutils literal notranslate"><span class="pre">Reranker.device</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#backend.reranker.Reranker.tokenizer"><code class="docutils literal notranslate"><span class="pre">Reranker.tokenizer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#backend.reranker.Reranker.model"><code class="docutils literal notranslate"><span class="pre">Reranker.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#backend.reranker.Reranker.apply"><code class="docutils literal notranslate"><span class="pre">Reranker.apply()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../frontend.html">Frontend</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Système RAG</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../backend.html">Backend</a></li>
+      <li class="breadcrumb-item active">backend.reranker</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/backend/reranker.rst.txt" rel="nofollow"> Afficher la source de la page</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-backend.reranker">
+<span id="backend-reranker"></span><h1>backend.reranker<a class="headerlink" href="#module-backend.reranker" title="Lien vers cette rubrique"></a></h1>
+<section id="module-reranker">
+<h2>Module Reranker<a class="headerlink" href="#module-reranker" title="Lien vers cette rubrique"></a></h2>
+<p>Ce module fournit la classe <cite>Reranker</cite> pour réordonner les résultats de recherche
+à l’aide de modèles pré-entraînés de la bibliothèque Transformers de Hugging Face.</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="backend.reranker.Reranker">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">backend.reranker.</span></span><span class="sig-name descname"><span class="pre">Reranker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/backend/reranker.html#Reranker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#backend.reranker.Reranker" title="Lien vers cette définition"></a></dt>
+<dd><p>Bases : <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Classe pour réordonner les résultats de recherche avec des modèles pré-entraînés.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="backend.reranker.Reranker.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><a class="headerlink" href="#backend.reranker.Reranker.model_name" title="Lien vers cette définition"></a></dt>
+<dd><p>Nom du modèle pré-entraîné Hugging Face à utiliser.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="backend.reranker.Reranker.device">
+<span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#backend.reranker.Reranker.device" title="Lien vers cette définition"></a></dt>
+<dd><p>Dispositif (CPU ou GPU) sur lequel le modèle est exécuté.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.device</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="backend.reranker.Reranker.tokenizer">
+<span class="sig-name descname"><span class="pre">tokenizer</span></span><a class="headerlink" href="#backend.reranker.Reranker.tokenizer" title="Lien vers cette définition"></a></dt>
+<dd><p>Tokenizer associé au modèle pré-entraîné.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>transformers.AutoTokenizer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="backend.reranker.Reranker.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#backend.reranker.Reranker.model" title="Lien vers cette définition"></a></dt>
+<dd><p>Modèle pré-entraîné pour réordonner les résultats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>transformers.AutoModel</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="backend.reranker.Reranker.apply">
+<span class="sig-name descname"><span class="pre">apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/backend/reranker.html#Reranker.apply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#backend.reranker.Reranker.apply" title="Lien vers cette définition"></a></dt>
+<dd><p>Réordonne les résultats de recherche en fonction de leur pertinence par rapport à la requête.</p>
+<section id="parametres">
+<h2>Paramètres<a class="headerlink" href="#parametres" title="Lien vers cette rubrique"></a></h2>
+<dl class="simple">
+<dt>query<span class="classifier">str</span></dt><dd><p>Requête utilisateur.</p>
+</dd>
+<dt>results<span class="classifier">list of dict</span></dt><dd><p>Résultats de recherche à réordonner. Chaque résultat doit contenir une clé “chunk_text”.</p>
+</dd>
+<dt>max_length<span class="classifier">int</span></dt><dd><p>Longueur maximale des séquences tokenisées.</p>
+</dd>
+</dl>
+</section>
+<section id="retourne">
+<h2>Retourne<a class="headerlink" href="#retourne" title="Lien vers cette rubrique"></a></h2>
+<dl class="simple">
+<dt>list of dict</dt><dd><p>Résultats réordonnés avec un score de reranking ajouté sous la clé “rerank_score”.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
+        <a href="llm.html" class="btn btn-neutral float-left" title="backend.llm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="../frontend.html" class="btn btn-neutral float-right" title="Frontend" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Droits d'auteur 2026, Acollab, 2026, T. Benmammar, F. Khleif, K. Pousse.</p>
+  </div>
+
+  Compilé avec <a href="https://www.sphinx-doc.org/">Sphinx</a> en utilisant un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">thème</a>
+    fourni par <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

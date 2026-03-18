@@ -1,0 +1,35 @@
+# Création d'un environnement conda
+# $ conda create -n rag python=3.10 -y
+# $ conda activate rag
+# $ pip install -r requirements.txt
+
+fastapi==0.119.1
+uvicorn[standard]==0.23.1
+gradio==5.49.1
+faiss-cpu==1.7.4
+transformers==4.44.2
+langchain==0.1
+numpy>=1.26
+torch>=2.2
+openai==2.6
+pandas==2.3.3
+requests
+python-dotenv
+
+# ── RAG Core ──────────────────────────────────────────────────────────────────
+faiss-cpu
+sentence-transformers
+
+# ── Mistral API (version récente obligatoire) ──────────────────────────────────
+mistralai>=1.0.0
+
+# ── LangChain + Mistral (versions compatibles entre elles) ────────────────────
+langchain-core==0.1.53
+langsmith==0.1.17
+langchain-mistralai>=0.1.0,<0.2.0
+
+# ── RAGAS (compatible avec langchain 0.1.x) ───────────────────────────────────
+ragas>=0.1.0,<0.2.0
+
+# ── Utilitaires ───────────────────────────────────────────────────────────────
+datasets

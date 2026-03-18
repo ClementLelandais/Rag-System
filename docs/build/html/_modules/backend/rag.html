@@ -1,0 +1,249 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fr" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>backend.rag &mdash; Documentation Système RAG 0.1</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=af8511e3"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/translations.js?v=e6b791cb"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Recherche" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Système RAG
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contenu:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../backend.html">Backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../frontend.html">Frontend</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Système RAG</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Code du module</a></li>
+      <li class="breadcrumb-item active">backend.rag</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Code source de backend.rag</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module RAG (Retrieval-Augmented Generation)</span>
+<span class="sd">===============</span>
+
+<span class="sd">Ce module fournit la classe `RAG` pour implémenter un système de</span>
+<span class="sd">Retrieval-Augmented Generation (RAG) combinant un embedder, une base de</span>
+<span class="sd">vecteurs, et un modèle de langage de grande taille (LLM) pour répondre</span>
+<span class="sd">aux requêtes en s&#39;appuyant sur des documents pertinents récupérés.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RAG">
+<a class="viewcode-back" href="../../backend/rag.html#backend.rag.RAG">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RAG</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Classe pour le système de Retrieval-Augmented Generation (RAG).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    embedder : Embedder</span>
+<span class="sd">        Instance de la classe Embedder pour générer des embeddings de texte.</span>
+<span class="sd">    vector_store : VectorStore</span>
+<span class="sd">        Instance de la classe VectorStore pour la recherche de documents.</span>
+<span class="sd">    llm : LLM</span>
+<span class="sd">        Instance de la classe LLM pour générer des réponses basées sur le contexte.</span>
+<span class="sd">    reranker : Reranker, optional</span>
+<span class="sd">        Instance de la classe Reranker pour réordonner les documents récupérés.</span>
+<span class="sd">    top_k : int</span>
+<span class="sd">        Nombre de documents contextuels à utiliser pour générer la réponse.</span>
+<span class="sd">    num_candidates : int</span>
+<span class="sd">        Nombre de documents candidats à récupérer avant le réordonnancement.</span>
+<span class="sd">    dtype : str</span>
+<span class="sd">        Type de données pour les embeddings (par exemple &#39;float32&#39;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">embedder</span><span class="p">,</span> 
+        <span class="n">vector_store</span><span class="p">,</span> 
+        <span class="n">llm</span><span class="p">,</span>
+        <span class="n">reranker</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="n">num_candidates</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;float32&#39;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise les composants du système RAG.</span>
+<span class="sd">        </span>
+<span class="sd">        Paramètres</span>
+<span class="sd">        ----------</span>
+<span class="sd">        embedder : Embedder</span>
+<span class="sd">            Instance de la classe Embedder pour générer des embeddings de texte.</span>
+<span class="sd">        vector_store : VectorStore</span>
+<span class="sd">            Instance de la classe VectorStore pour la recherche de documents.</span>
+<span class="sd">        llm : LLM</span>
+<span class="sd">            Instance de la classe LLM pour générer des réponses basées sur le contexte.</span>
+<span class="sd">        reranker : Reranker, optional</span>
+<span class="sd">            Instance de la classe Reranker pour réordonner les documents récupérés.</span>
+<span class="sd">        top_k : int</span>
+<span class="sd">            Nombre de documents contextuels à utiliser pour générer la réponse.</span>
+<span class="sd">        num_candidates : int</span>
+<span class="sd">            Nombre de documents candidats à récupérer avant le réordonnancement.</span>
+<span class="sd">        dtype : str</span>
+<span class="sd">            Type de données pour les embeddings (par exemple &#39;float32&#39;).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedder</span> <span class="o">=</span> <span class="n">embedder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vector_store</span> <span class="o">=</span> <span class="n">vector_store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">llm</span> <span class="o">=</span> <span class="n">llm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reranker</span> <span class="o">=</span> <span class="n">reranker</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_k</span> <span class="o">=</span> <span class="n">top_k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">top_k</span> <span class="o">=</span> <span class="n">top_k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_candidates</span> <span class="o">=</span> <span class="n">num_candidates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Récupère les documents pertinents pour une requête donnée.</span>
+
+<span class="sd">        Paramètres</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query : str</span>
+<span class="sd">            Requête utilisateur.</span>
+
+<span class="sd">        Retourne</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : list of dict</span>
+<span class="sd">            Liste des documents récupérés avec leurs métadonnées.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">q_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedder</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">distances</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_store</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">q_emb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_candidates</span><span class="p">)</span>
+
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">rank</span><span class="p">,</span> <span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">indices</span><span class="p">)):</span>
+            <span class="n">entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_store</span><span class="o">.</span><span class="n">entites</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">&quot;rank&quot;</span><span class="p">:</span> <span class="n">rank</span><span class="p">,</span>
+                <span class="s2">&quot;distance&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">dist</span><span class="p">),</span>
+                <span class="s2">&quot;chunk_text&quot;</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;chunk_text&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;doc_uuid&quot;</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;doc_uuid&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;answer_text&quot;</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;answer_text&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;topic&quot;</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;topic&quot;</span><span class="p">],</span>
+            <span class="p">})</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reranker</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reranker</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">top_k</span><span class="p">]</span>
+
+<div class="viewcode-block" id="RAG.ask">
+<a class="viewcode-back" href="../../backend/rag.html#backend.rag.RAG.ask">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pose une question et obtient une réponse en utilisant le système RAG.</span>
+<span class="sd">        </span>
+<span class="sd">        Paramètres</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query : str</span>
+<span class="sd">            Question posée par l&#39;utilisateur.</span>
+<span class="sd">        </span>
+<span class="sd">        Retourne</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionnaire contenant la réponse, les documents utilisés, et les résultats bruts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">,</span> <span class="n">docs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">build_context</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="n">final</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="n">final</span><span class="p">,</span>
+            <span class="s2">&quot;documents&quot;</span><span class="p">:</span> <span class="n">docs</span><span class="p">,</span>
+            <span class="s2">&quot;raw_results&quot;</span><span class="p">:</span> <span class="n">res</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Droits d'auteur 2026, Acollab, 2026, T. Benmammar, F. Khleif, K. Pousse.</p>
+  </div>
+
+  Compilé avec <a href="https://www.sphinx-doc.org/">Sphinx</a> en utilisant un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">thème</a>
+    fourni par <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

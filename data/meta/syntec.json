@@ -1,0 +1,6 @@
+{
+  "n_chunks": 208,
+  "model": "BAAI/bge-m3",
+  "dataset": "syntec",
+  "source_count": 100
+}
