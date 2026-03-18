@@ -1,6 +1,0 @@
-{
-  "n_chunks": 237631,
-  "model": "BAAI/bge-m3",
-  "dataset": "bsard",
-  "source_count": 114273
-}

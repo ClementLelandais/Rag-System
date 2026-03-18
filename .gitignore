@@ -19,3 +19,26 @@ __pycache__/
 .pytest_cache/
 .venv/
 env/
+
+# Modèles lourds
+models/
+*.bin
+*.onnx
+*.onnx_data
+*.safetensors
+
+# Embeddings et données générées
+generer_data/
+*.npy
+
+# Données brutes lourdes
+data/raw/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Environnement
+__pycache__/
+*.pyc
+.env
+venv/
